@@ -1,28 +1,28 @@
 .root {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    max-width: 70%;
-    padding: 8px 12px;
-    box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: 70%;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  border-radius: var(--size-border-radius-semantic-border-radius-card);
 }
 
 .incoming {
-    align-self: flex-start;
-    background-color: #fff;
+  align-self: flex-start;
+  background: var(--background-secondary);
 }
 
 .outgoing {
-    align-self: flex-end;
-    background-color: #fff;
-
+  align-self: flex-end;
+  background: var(--background-accent-neutral-fade-secondary);
 }
 
 .text {
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .time {
-    align-self: flex-end;
+  align-self: flex-end;
 }

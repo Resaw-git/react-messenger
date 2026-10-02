@@ -1,0 +1,8 @@
+.root {
+  width: 100%;
+  max-width: 360px;
+  padding: 24px;
+  box-sizing: border-box;
+  background: var(--background-primary);
+  border-radius: var(--size-border-radius-semantic-border-radius-card);
+}

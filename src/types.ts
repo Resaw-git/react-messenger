@@ -30,6 +30,9 @@ export interface NotificationBody {
     textMessageData?: {
       textMessage: string;
     };
+    extendedTextMessageData?: {
+      text: string;
+    };
   };
 }
 

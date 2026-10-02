@@ -9,15 +9,29 @@ interface UseIncomingMessagesParams {
   onMessage: (message: MessageModel) => void;
 }
 
+/** Достаёт текст из уведомления; null — если это не текстовое сообщение */
 const extractText = (notification: Notification): string | null => {
   const { messageData } = notification.body;
   if (!messageData) return null;
-  if (messageData.typeMessage === "textMessage" && messageData.textMessageData) {
+
+  // textMessage — сообщение, отправленное с телефона
+  if (messageData.textMessageData) {
     return messageData.textMessageData.textMessage;
+  }
+
+  // extendedTextMessage — сообщение, отправленное через API (в т.ч. обычный текст)
+  if (messageData.extendedTextMessageData) {
+    return messageData.extendedTextMessageData.text;
   }
 
   return null;
 };
+
+const WEBHOOK_DIRECTIONS: Record<string, MessageModel["direction"]> = {
+  incomingMessageReceived: "in",
+  outgoingMessageReceived: "out",
+};
+
 const POLL_DELAY = 500;
 const MAX_ERROR_DELAY = 10_000;
 
@@ -48,19 +62,23 @@ export const useIncomingMessages = ({ credentials, chatId, enabled, onMessage }:
         if (controller.signal.aborted) return;
 
         if (notification) {
-          await deleteNotification(credentials, notification.receiptId);
-
           const { body } = notification;
-          if (body.typeWebhook === "incomingMessageReceived" && body.senderData?.chatId === chatId) {
+          const direction = WEBHOOK_DIRECTIONS[body.typeWebhook];
+
+          if (direction && String(body.senderData?.chatId) === String(chatId)) {
             const text = extractText(notification);
-            if (text !== null) {
+            if (text !== null && !controller.signal.aborted) {
               onMessageRef.current({
                 id: body.idMessage ?? String(body.timestamp),
                 text,
-                direction: "in",
+                direction,
                 timestamp: body.timestamp * 1000,
               });
             }
+          }
+
+          if (!controller.signal.aborted) {
+            await deleteNotification(credentials, notification.receiptId);
           }
         }
         errorDelay = POLL_DELAY;
