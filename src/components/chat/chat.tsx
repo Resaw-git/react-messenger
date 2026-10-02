@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { FormEvent } from "react";
+import type { SubmitEvent } from "react";
 import styles from "./chat.module.css";
 import { Button, Flex, Input, Typography } from "@maxhub/max-ui";
 
@@ -11,14 +11,14 @@ interface ChatProps {
 
 const normalizePhone = (value: string): string => value.replace(/\D/g, "");
 
-const isValidPhone = (phone: string): boolean => /^(7\d{10}\d{9})$/.test(phone);
+const isValidPhone = (phone: string): boolean => /^(7\d{10})$/.test(phone);
 
 export const Chat = ({ onSubmit, error, loading = false }: ChatProps) => {
   const [value, setValue] = useState("");
   const phone = normalizePhone(value);
   const isValid = isValidPhone(phone);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!isValid) return;
     onSubmit(phone);

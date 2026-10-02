@@ -37,3 +37,15 @@ export interface DeleteNotificationResponse {
     result: boolean;
     reason: string;
 }
+
+export interface MessageModel {
+  id: string;
+  text: string;
+  direction: "in" | "out";
+  timestamp: number;
+}
+
+export interface ChatModel {
+  phone: string;
+  chatId: string;
+}

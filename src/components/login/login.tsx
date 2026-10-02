@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { FormEvent } from "react";
+import type { SubmitEvent } from "react";
 import type { Credentials } from "../../types";
 import styles from "./login.module.css";
 import { Button, Flex, Input, Typography } from "@maxhub/max-ui";
@@ -14,7 +14,7 @@ export const Login = ({ onSubmit }: LoginProps) => {
 
   const isValid = idInstance.trim() !== "" && apiTokenInstance.trim() !== "";
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!isValid) return;
     onSubmit({ idInstance: idInstance.trim(), apiTokenInstance: apiTokenInstance.trim() });

@@ -1,0 +1,28 @@
+.root {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    max-width: 70%;
+    padding: 8px 12px;
+    box-sizing: border-box;
+}
+
+.incoming {
+    align-self: flex-start;
+    background-color: #fff;
+}
+
+.outgoing {
+    align-self: flex-end;
+    background-color: #fff;
+
+}
+
+.text {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.time {
+    align-self: flex-end;
+}

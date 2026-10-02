@@ -87,7 +87,6 @@ export const checkAccount = async (credentials: Credentials, phoneNumber: string
   });
 };
 
-// TODO: polling hook
 export const receiveNotification = async (
   credentials: Credentials,
   receiveTimeout = MIN_RECEIVE_TIMEOUT,

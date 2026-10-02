@@ -1,0 +1,12 @@
+.root {
+  padding: 12px;
+  box-sizing: border-box;
+  background: var(--background-primary);
+  border-top: 1px solid var(--background-secondary);
+}
+
+.textarea {
+  flex: 1;
+  resize: none;
+  max-height: 120px;
+}

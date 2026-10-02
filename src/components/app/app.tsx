@@ -1,10 +1,12 @@
 //import styles from "./app.module.css";
 import { Login } from "../login/login";
 import { Chat } from "../chat/chat";
+import { Message } from "../message/message";
+import { MessageInput } from "../input/input";
 
 export const App = () => {
-
-  return <Chat onSubmit={(phone) => console.log(phone)} error="На этом номере нет аккаунта MAX" />;
-}
-
-
+  
+  return (
+    <MessageInput onSend={(text) => console.log("send:", text)} />
+  );
+};
