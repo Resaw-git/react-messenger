@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { SubmitEvent } from "react";
+import { getStateInstance } from "../../services/green-api";
 import type { Credentials } from "../../types";
 import styles from "./login.module.css";
 import { Button, Input, MaxUI, Typography } from "@maxhub/max-ui";
@@ -11,13 +12,44 @@ interface LoginProps {
 export const Login = ({ onSubmit }: LoginProps) => {
   const [idInstance, setIdInstance] = useState("");
   const [apiTokenInstance, setApiTokenInstance] = useState("");
+  const [checking, setChecking] = useState(false);
+  const [error, setError] = useState<string>();
 
   const isValid = idInstance.trim() !== "" && apiTokenInstance.trim() !== "";
 
-  const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
+  const handleIdInstanceChange = (value: string) => {
+    setIdInstance(value);
+    setError(undefined);
+  };
+
+  const handleApiTokenInstanceChange = (value: string) => {
+    setApiTokenInstance(value);
+    setError(undefined);
+  };
+
+  const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!isValid) return;
-    onSubmit({ idInstance: idInstance.trim(), apiTokenInstance: apiTokenInstance.trim() });
+    if (!isValid || checking) return;
+
+    const credentials: Credentials = {
+      idInstance: idInstance.trim(),
+      apiTokenInstance: apiTokenInstance.trim(),
+    };
+
+    setChecking(true);
+    setError(undefined);
+    try {
+      const { stateInstance } = await getStateInstance(credentials);
+      if (stateInstance !== "authorized") {
+        setError("Инстанс не авторизован. Авторизуйте его в личном кабинете Green API");
+        return;
+      }
+      onSubmit(credentials);
+    } catch {
+      setError("Неверные idInstance или apiTokenInstance. Проверьте данные инстанса");
+    } finally {
+      setChecking(false);
+    }
   };
 
   return (
@@ -41,7 +73,8 @@ export const Login = ({ onSubmit }: LoginProps) => {
               inputMode="numeric"
               autoComplete="off"
               value={idInstance}
-              onChange={(event) => setIdInstance(event.target.value)}
+              disabled={checking}
+              onChange={(event) => handleIdInstanceChange(event.target.value)}
             />
 
             <Input
@@ -51,12 +84,19 @@ export const Login = ({ onSubmit }: LoginProps) => {
               type="password"
               autoComplete="off"
               value={apiTokenInstance}
-              onChange={(event) => setApiTokenInstance(event.target.value)}
+              disabled={checking}
+              onChange={(event) => handleApiTokenInstanceChange(event.target.value)}
             />
           </div>
 
-          <Button type="submit" variant="primary" size="medium" stretched disabled={!isValid}>
-            Продолжить
+          {error && (
+            <Typography.Text className={styles.error} variant="description" role="alert">
+              {error}
+            </Typography.Text>
+          )}
+
+          <Button type="submit" variant="primary" size="medium" stretched disabled={!isValid || checking}>
+            {checking ? "Проверка..." : "Продолжить"}
           </Button>
           <Typography.Text className={styles.hint} variant="description" color="tertiary">
             Инстанса ещё нет? Создайте его по ссылке{" "}

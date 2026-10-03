@@ -1,0 +1,29 @@
+# Caddy автоматически получает и продлевает TLS-сертификат Let's Encrypt,
+# если домен resaw.ru указывает на этот сервер и порты 80/443 доступны извне.
+
+resaw.ru {
+	# Сжатие ответов
+	encode zstd gzip
+
+	# Проксирование на контейнер с фронтендом (внутри docker-сети)
+	reverse_proxy frontend:80
+
+	# Заголовки безопасности
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	log {
+		output stdout
+		format console
+	}
+}
+
+# Редирект с www на основной домен
+www.resaw.ru {
+	redir https://resaw.ru{uri} permanent
+}

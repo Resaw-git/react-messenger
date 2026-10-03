@@ -1,73 +1,143 @@
-# React + TypeScript + Vite
+# React Messenger (Green API MAX Chat)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Веб-клиент мессенджера MAX, работающий через [Green API](https://green-api.com). Приложение позволяет авторизоваться по учётным данным инстанса Green API (`idInstance` / `apiTokenInstance`), добавлять контакты по номеру телефона, проверять наличие аккаунта MAX у номера и вести переписку: отправлять сообщения и получать входящие через механизм нотификаций Green API.
 
-Currently, two official plugins are available:
+Это полностью клиентское приложение (SPA) — серверной части нет, все запросы идут напрямую из браузера в Green API.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Функциональность
 
-## React Compiler
+- Авторизация по `idInstance`, `apiTokenInstance`
+- Добавление контактов по номеру телефона с проверкой аккаунта (`checkAccount`)
+- Список контактов и выбор активного чата
+- Отправка текстовых сообщений (`sendMessage`)
+- Получение входящих сообщений через long-polling нотификаций (`receiveNotification` / `deleteNotification`)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Технологии
 
-## Expanding the ESLint configuration
+- **React 19** + **TypeScript** — UI и типизация
+- **Vite 8** — сборка и dev-сервер (HMR)
+- **@maxhub/max-ui** — UI-компоненты MAX
+- **CSS Modules** — стилизация компонентов
+- **ESLint + Prettier** — линтинг и форматирование
+- **Docker + nginx** — контейнеризация и раздача статики в production
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Требования
 
-```js
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
+- Node.js **22+** и npm (для локального запуска)
+- Docker (для запуска в контейнере)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Запуск локально
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+```bash
+# Установить зависимости
+npm ci
+
+# Запустить dev-сервер с горячей перезагрузкой
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+Приложение будет доступно по адресу http://localhost:5173
 
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
-import reactDom from "eslint-plugin-react-dom";
+### Другие команды
 
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs["recommended-typescript"],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+```bash
+npm run build     # production-сборка в ./dist
+npm run preview   # локальный предпросмотр production-сборки
+npm run lint      # проверка кода ESLint
+npm run format    # форматирование кода Prettier
+```
+
+## Запуск в Docker
+
+В корне проекта находится multi-stage `Dockerfile`: на первом этапе приложение собирается через Node.js, на втором — статика из `./dist` раздаётся nginx (порт 80 внутри контейнера). Конфиг nginx включает SPA-fallback и кеширование ассетов.
+
+### Локальный запуск (без домена)
+
+```bash
+# Собрать образ
+docker build -t react-messenger .
+
+# Запустить контейнер (приложение будет на http://localhost:8080)
+docker run -d --name react-messenger -p 8080:80 react-messenger
+```
+
+### Production: Docker Compose + Caddy (HTTPS)
+
+`docker-compose.yml` поднимает два сервиса:
+
+- **frontend** — приложение, доступно только внутри docker-сети (порт наружу не пробрасывается)
+- **caddy** — reverse-proxy с автоматическим TLS: сам получает и продлевает сертификат Let's Encrypt для домена, слушает порты 80/443
+
+Перед запуском убедитесь, что:
+
+1. Домен (A-запись) указывает на публичный IP сервера
+2. Порты 80 и 443 открыты и доступны извне (проброс на роутере / правила firewall)
+3. Провайдер не блокирует входящие порты 80/443
+
+```bash
+# Собрать и запустить
+docker compose up -d --build
+
+# Логи Caddy (получение сертификата)
+docker compose logs -f caddy
+
+# Остановить
+docker compose down
+```
+
+После запуска приложение будет доступно по адресу https://resaw.ru — сертификат выпускается автоматически при первом обращении.
+
+## Публикация на собственном сервере
+
+Общая схема: `Интернет → домен (A-запись) → роутер (проброс 80/443) → Caddy → frontend`
+
+```bash
+# 1. Склонировать репозиторий на сервер
+git clone https://github.com/Resaw-git/react-messenger.git
+cd react-messenger
+
+# 2. Указать свой домен в Caddyfile (вместо resaw.ru)
+
+# 3. Собрать и запустить
+docker compose up -d --build
+```
+
+### Деплой обновлений одной командой
+
+```bash
+npm run deploy
+```
+
+Скрипт `scripts/deploy.ps1` (Windows PowerShell) автоматически выполняет:
+
+1. `git pull --ff-only` — забирает последние изменения из репозитория
+2. `docker compose up -d --build frontend` — пересобирает образ и пересоздаёт контейнер
+3. ждёт, пока контейнер станет `healthy` (до 60 секунд)
+4. выводит итоговый статус контейнеров
+
+При ошибке на любом шаге скрипт завершается с ненулевым кодом и понятным сообщением.
+
+Перед деплоем полезно прогнать проверки локально:
+
+```bash
+npm run lint      # линтинг
+npm run build     # проверка сборки
+```
+
+Рекомендации по безопасности:
+
+- Открывайте наружу только порты 80 и 443
+- Машине с Docker назначьте статический внутренний IP (или резервирование в DHCP роутера), чтобы проброс портов не «слетел»
+- Включите firewall на сервере (ufw / Windows Firewall)
+- SSH — только по ключам, парольную авторизацию отключите
+
+## Структура проекта
+
+```
+src/
+├── components/        # React-компоненты (app, login, contacts, chat, message и др.)
+├── services/          # Клиент Green API (green-api.ts)
+├── utils/             # Вспомогательные функции (нормализация телефона)
+├── types.ts           # Общие типы
+└── main.tsx           # Точка входа
 ```

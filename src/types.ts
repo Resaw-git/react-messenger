@@ -7,6 +7,12 @@ export interface SendMessageResponse {
   idMessage: string;
 }
 
+export type StateInstance = "authorized" | "notAuthorized" | "blocked" | "sleepMode" | "starting";
+
+export interface GetStateInstanceResponse {
+  stateInstance: StateInstance;
+}
+
 export interface CheckAccountResponse {
   exist: boolean;
   chatId: string;

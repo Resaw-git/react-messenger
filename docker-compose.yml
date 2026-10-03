@@ -1,0 +1,35 @@
+services:
+  frontend:
+    build: .
+    container_name: react-messenger
+    restart: unless-stopped
+    # Порт наружу НЕ пробрасывается — приложение доступно
+    # только внутри docker-сети, снаружи смотрит Caddy
+    expose:
+      - "80"
+    networks:
+      - web
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp" # HTTP/3
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data # сертификаты Let's Encrypt
+      - caddy_config:/config
+    depends_on:
+      - frontend
+    networks:
+      - web
+
+volumes:
+  caddy_data:
+  caddy_config:
+
+networks:
+  web:

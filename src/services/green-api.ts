@@ -2,6 +2,7 @@ import type {
   CheckAccountResponse,
   Credentials,
   DeleteNotificationResponse,
+  GetStateInstanceResponse,
   Notification,
   SendMessageResponse,
 } from "../types";
@@ -13,7 +14,7 @@ const HOST_ALLOWLIST_RE = new RegExp(`^https://\\d{4}\\.api\\.${API_DOMAIN.repla
 const MIN_RECEIVE_TIMEOUT = 5;
 const MAX_RECEIVE_TIMEOUT = 60;
 
-type ApiMethod = "sendMessage" | "checkAccount" | "receiveNotification" | "deleteNotification";
+type ApiMethod = "sendMessage" | "checkAccount" | "receiveNotification" | "deleteNotification" | "getStateInstance";
 
 const resolveApiUrl = ({ idInstance, apiUrl }: Credentials): string => {
   if (apiUrl) {
@@ -64,6 +65,9 @@ const request = async <T>(url: string, init?: RequestInit): Promise<T> => {
     throw new Error("Green API: ответ не является корректным JSON");
   }
 };
+
+export const getStateInstance = async (credentials: Credentials): Promise<GetStateInstanceResponse> =>
+  request<GetStateInstanceResponse>(buildUrl(credentials, "getStateInstance"));
 
 export const sendMessage = async (
   credentials: Credentials,
