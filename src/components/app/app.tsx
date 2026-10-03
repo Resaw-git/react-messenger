@@ -5,10 +5,11 @@ import { Login } from "../login/login";
 import { Nav } from "../nav/nav";
 import { Contacts } from "../contacts/contacts";
 import { Chat } from "../chat/chat";
+import { Icon } from "../icon/icon";
 import styles from "./app.module.css";
 
 export const App = () => {
-  const [credentials, setCredentials] = useState<Credentials>();
+  const [credentials, setCredentials] = useState<Credentials | undefined>();
   const [contacts, setContacts] = useState<ChatModel[]>([]);
   const [chat, setChat] = useState<ChatModel>();
   const [adding, setAdding] = useState(false);
@@ -21,6 +22,17 @@ export const App = () => {
 
   const handleSelectChat = (value: ChatModel) => {
     setChat(value);
+    setError(undefined);
+  };
+
+  const handleCloseChat = () => {
+    setChat(undefined);
+  };
+
+  const handleLogout = () => {
+    setCredentials(undefined);
+    setContacts([]);
+    setChat(undefined);
     setError(undefined);
   };
 
@@ -58,18 +70,34 @@ export const App = () => {
   }
 
   return (
-    <div className={styles.shell}>
-      <Nav />
-      <Contacts
-        contacts={contacts}
-        selectedChatId={chat?.chatId}
-        adding={adding}
-        error={error}
-        onSelect={handleSelectChat}
-        onAdd={handleAddContact}
-        onClearError={() => setError(undefined)}
-      />
-      <main className={styles.main}>{chat && <Chat key={chat.chatId} credentials={credentials} chat={chat} />}</main>
+    <div className={chat ? `${styles.shell} ${styles.chatOpen}` : styles.shell}>
+      <div className={styles.nav}>
+        <Nav onLogout={handleLogout} />
+      </div>
+      <div className={styles.contacts}>
+        <Contacts
+          contacts={contacts}
+          selectedChatId={chat?.chatId}
+          adding={adding}
+          error={error}
+          onSelect={handleSelectChat}
+          onAdd={handleAddContact}
+          onClearError={() => setError(undefined)}
+        />
+      </div>
+      <main className={styles.main}>
+        {chat ? (
+          <Chat key={chat.chatId} credentials={credentials} chat={chat} onBack={handleCloseChat} />
+        ) : (
+          <div className={styles.placeholder}>
+            <div className={styles.placeholderIcon}>
+              <Icon name="message" size={40} />
+            </div>
+            <p className={styles.placeholderTitle}>Выберите контакт</p>
+            <p className={styles.placeholderText}>Выберите чат из списка, чтобы начать переписку</p>
+          </div>
+        )}
+      </main>
     </div>
   );
 };

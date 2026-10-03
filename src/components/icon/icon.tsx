@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-export type IconName = "users" | "user-add" | "user" | "send" | "search" | "message" | "plus" | "cross";
+export type IconName = "users" | "user-add" | "user" | "send" | "search" | "message" | "plus" | "cross" | "back" | "logout";
 
 interface IconProps {
   name: IconName;
@@ -91,6 +91,28 @@ const ICONS: Record<IconName, { viewBox: string; content: ReactNode }> = {
     viewBox: "0 0 24 24",
     content: (
       <path fill="currentColor" d="M11 13v6a1 1 0 1 0 2 0v-6h6a1 1 0 1 0 0-2h-6V5a1 1 0 1 0-2 0v6H5a1 1 0 1 0 0 2z" />
+    ),
+  },
+  logout: {
+    viewBox: "0 0 24 24",
+    content: (
+      <path
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 14 5-5-5-5m5 5H9"
+      />
+    ),
+  },
+  back: {
+    viewBox: "0 0 24 24",
+    content: (
+      <path
+        fill="currentColor"
+        d="M10.707 5.293a1 1 0 0 1 0 1.414L6.414 11H20a1 1 0 1 1 0 2H6.414l4.293 4.293a1 1 0 0 1-1.414 1.414l-6-6a1 1 0 0 1 0-1.414l6-6a1 1 0 0 1 1.414 0z"
+      />
     ),
   },
   cross: {

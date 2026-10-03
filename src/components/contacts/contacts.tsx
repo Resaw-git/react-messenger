@@ -36,7 +36,7 @@ export const Contacts = ({ contacts, selectedChatId, adding, error, onSelect, on
           aria-haspopup="dialog"
           onClick={() => setModalOpen(true)}
         >
-          <Icon name="user-add" size={20} />
+          <Icon name="plus" size={20} />
         </button>
       </div>
 

@@ -1,6 +1,8 @@
 .root {
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-height: 0;
   height: 100%;
   overflow: hidden;
   color: #ffffff;
@@ -16,6 +18,26 @@
   box-sizing: border-box;
   border-bottom: 1px solid var(--max-divider);
   background: #17181c;
+}
+
+.back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin-left: -8px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.back:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
 }
 
 .headerBody {

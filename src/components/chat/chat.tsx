@@ -5,15 +5,17 @@ import { formatPhone } from "../../utils/phone";
 import { Avatar } from "../avatar/avatar";
 import { Message } from "../message/message";
 import { MessageInput } from "../input/input";
+import { Icon } from "../icon/icon";
 import { useIncomingMessages } from "./use-incoming-messages";
 import styles from "./chat.module.css";
 
 interface ChatProps {
   credentials: Credentials;
   chat: ChatModel;
+  onBack: () => void;
 }
 
-export const Chat = ({ credentials, chat }: ChatProps) => {
+export const Chat = ({ credentials, chat, onBack }: ChatProps) => {
   const [messages, setMessages] = useState<MessageModel[]>([]);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string>();
@@ -53,6 +55,9 @@ export const Chat = ({ credentials, chat }: ChatProps) => {
   return (
     <div className={styles.root}>
       <header className={styles.header}>
+        <button type="button" className={styles.back} aria-label="Назад к контактам" onClick={onBack}>
+          <Icon name="back" size={24} />
+        </button>
         <Avatar seed={chat.phone} size={40} />
         <div className={styles.headerBody}>
           <span className={styles.headerTitle}>{getContactName(chat) || formatPhone(chat.phone)}</span>

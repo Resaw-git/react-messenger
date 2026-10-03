@@ -21,7 +21,7 @@ export const Login = ({ onSubmit }: LoginProps) => {
   };
 
   return (
-    <MaxUI className={styles.screen}>
+    <MaxUI className={styles.screen} colorScheme="dark">
       <form className={styles.card} onSubmit={handleSubmit}>
         <div className={styles.container}>
           <div className={styles.brand}>
