@@ -1,12 +1,57 @@
 .root {
-  padding: 12px;
+  position: relative;
+  padding: 24px 16px;
   box-sizing: border-box;
-  background: var(--background-primary);
-  border-top: 1px solid var(--background-secondary);
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
 }
 
 .textarea {
-  flex: 1;
-  resize: none;
+  display: block;
+  width: 100%;
+  height: 40px;
   max-height: 120px;
+  padding: 10px 56px 10px 18px;
+  box-sizing: border-box;
+  border: 0;
+  border-radius: 16px;
+  resize: none;
+  background: #17181c;
+  font-family: inherit;
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 0.15px;
+  color: #ffffff;
+  outline: none;
+}
+
+.textarea::placeholder {
+  color: #6c7883;
+}
+
+.send {
+  position: absolute;
+  right: 24px;
+  bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--max-accent);
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.send:hover:not(:disabled) {
+  background: var(--max-accent-hover);
+}
+
+.send:disabled {
+  opacity: 0.4;
+  cursor: default;
 }

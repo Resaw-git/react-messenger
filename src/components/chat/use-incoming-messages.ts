@@ -8,18 +8,14 @@ interface UseIncomingMessagesParams {
   enabled: boolean;
   onMessage: (message: MessageModel) => void;
 }
-
-/** Достаёт текст из уведомления; null — если это не текстовое сообщение */
 const extractText = (notification: Notification): string | null => {
   const { messageData } = notification.body;
   if (!messageData) return null;
 
-  // textMessage — сообщение, отправленное с телефона
   if (messageData.textMessageData) {
     return messageData.textMessageData.textMessage;
   }
 
-  // extendedTextMessage — сообщение, отправленное через API (в т.ч. обычный текст)
   if (messageData.extendedTextMessageData) {
     return messageData.extendedTextMessageData.text;
   }
@@ -53,11 +49,7 @@ export const useIncomingMessages = ({ credentials, chatId, enabled, onMessage }:
       let nextDelay = POLL_DELAY;
 
       try {
-        const notification = await receiveNotification(
-          credentials,
-          undefined,
-          controller.signal,
-        );
+        const notification = await receiveNotification(credentials, undefined, controller.signal);
 
         if (controller.signal.aborted) return;
 

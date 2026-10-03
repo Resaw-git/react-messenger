@@ -4,6 +4,25 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --max-accent: #007aff;
+  --max-accent-hover: #006be0;
+  --max-panel-bg: #ffffff;
+  --max-chat-bg: #f5f7fa;
+  --max-divider: #0c0d0e0f;
+  --max-text-primary: #060708;
+  --max-text-secondary: #060708ad;
+  --max-text-tertiary: #06070885;
+  --max-text-mute: #06070866;
+  --max-icon-secondary: #060708a3;
+  --max-input-bg: #09090914;
+  --max-card-hover: #f6f6f6;
+  --max-card-selected: #007aff14;
+  --max-negative: #ff303c;
+  --max-bubble-incoming: #ffffff;
+  --max-bubble-outgoing-from: #4fadbc;
+  --max-bubble-outgoing-to: #4fa9d7;
+  --max-shadow-bubble: 0 1px 1px #0c0d0e0f;
 }
 
 html,
@@ -14,5 +33,5 @@ body,
 
 body {
   margin: 0;
-  font-family: system-ui, "Roboto", "Segoe UI",sans-serif;
+  font-family: system-ui, "Roboto", "Segoe UI", sans-serif;
 }

@@ -7,7 +7,7 @@ import { App } from "./components/app/app";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <MaxUI>
+    <MaxUI colorScheme="dark">
       <App />
     </MaxUI>
   </StrictMode>,

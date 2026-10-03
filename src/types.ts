@@ -51,4 +51,10 @@ export interface MessageModel {
 export interface ChatModel {
   phone: string;
   chatId: string;
+  firstName?: string;
+  lastName?: string;
+}
+
+export function getContactName(chat: ChatModel): string {
+  return [chat.firstName, chat.lastName].filter(Boolean).join(" ");
 }

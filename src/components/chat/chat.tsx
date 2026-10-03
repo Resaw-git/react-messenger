@@ -1,7 +1,8 @@
-import { useRef, useState } from "react";
-import { Flex, Typography } from "@maxhub/max-ui";
+import { useEffect, useRef, useState } from "react";
 import { sendMessage } from "../../services/green-api";
-import type { ChatModel, Credentials, MessageModel } from "../../types";
+import { getContactName, type ChatModel, type Credentials, type MessageModel } from "../../types";
+import { formatPhone } from "../../utils/phone";
+import { Avatar } from "../avatar/avatar";
 import { Message } from "../message/message";
 import { MessageInput } from "../input/input";
 import { useIncomingMessages } from "./use-incoming-messages";
@@ -17,6 +18,7 @@ export const Chat = ({ credentials, chat }: ChatProps) => {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string>();
   const knownIdsRef = useRef(new Set<string>());
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   const addMessage = (message: MessageModel) => {
     if (knownIdsRef.current.has(message.id)) return;
@@ -30,6 +32,10 @@ export const Chat = ({ credentials, chat }: ChatProps) => {
     enabled: true,
     onMessage: addMessage,
   });
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ block: "end" });
+  }, [messages.length]);
 
   const handleSend = async (text: string) => {
     setSending(true);
@@ -45,28 +51,25 @@ export const Chat = ({ credentials, chat }: ChatProps) => {
   };
 
   return (
-    <Flex className={styles.root} direction="column">
-      <Flex className={styles.header} align="center" gap={8}>
-        <Typography.Title variant="small-strong">{chat.phone}</Typography.Title>
-      </Flex>
+    <div className={styles.root}>
+      <header className={styles.header}>
+        <Avatar seed={chat.phone} size={40} />
+        <div className={styles.headerBody}>
+          <span className={styles.headerTitle}>{getContactName(chat) || formatPhone(chat.phone)}</span>
+          <span className={styles.headerSubtitle}>{getContactName(chat) ? formatPhone(chat.phone) : "MAX"}</span>
+        </div>
+      </header>
 
-      <Flex className={styles.messages} direction="column" gap={8}>
-        {messages.length === 0 ? (
-          <Typography.Text variant="body" color="secondary">
-            Напишите первое сообщение
-          </Typography.Text>
-        ) : (
-          messages.map((message) => <Message key={message.id} message={message} />)
-        )}
-      </Flex>
+      <div className={styles.messages}>
+        {messages.map((message) => (
+          <Message key={message.id} message={message} />
+        ))}
+        <div ref={bottomRef} />
+      </div>
 
-      {error && (
-        <Typography.Text variant="body" className={styles.error}>
-          {error}
-        </Typography.Text>
-      )}
+      {error && <p className={styles.error}>{error}</p>}
 
       <MessageInput onSend={handleSend} disabled={sending} />
-    </Flex>
+    </div>
   );
 };

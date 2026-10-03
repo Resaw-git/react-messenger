@@ -1,0 +1,109 @@
+.root {
+  width: 360px;
+  min-width: 280px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  background: #17181c;
+  border: 1px solid #2d2d2d;
+  color: #ffffff;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 16px 8px;
+}
+
+.title {
+  margin: 0;
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: 600;
+}
+
+.addButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--max-accent);
+  cursor: pointer;
+}
+
+.addButton:hover {
+  background: var(--max-accent-hover);
+}
+
+.list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 8px 8px;
+  box-sizing: border-box;
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.cell:hover {
+  background: var(--max-card-hover);
+}
+
+.selected,
+.selected:hover {
+  background: var(--max-card-selected);
+}
+
+.cellBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.cellName {
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 500;
+  color: var(--max-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cellStatus {
+  font-size: 13px;
+  line-height: 16px;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 40px 16px;
+  box-sizing: border-box;
+}
+
+.emptyText {
+  margin: 0;
+  font-size: 13px;
+  line-height: 16px;
+  text-align: center;
+}

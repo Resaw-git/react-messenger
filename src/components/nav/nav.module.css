@@ -1,0 +1,40 @@
+.root {
+  width: 77px;
+  min-width: 77px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 8px;
+  background: #17181c;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  padding: 8px 4px;
+  box-sizing: border-box;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  color: var(--max-icon-secondary);
+  cursor: pointer;
+}
+
+.active {
+  color: #fff;
+}
+
+.title {
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.3px;
+  color: var(--max-text-secondary);
+}
+
+.active .title {
+  color: #fff;
+}

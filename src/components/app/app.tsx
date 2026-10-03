@@ -1,16 +1,17 @@
 import { useState } from "react";
-import { Flex } from "@maxhub/max-ui";
 import { checkAccount } from "../../services/green-api";
 import type { ChatModel, Credentials } from "../../types";
 import { Login } from "../login/login";
-import { NewChat } from "../new-chat/new-chat";
+import { Nav } from "../nav/nav";
+import { Contacts } from "../contacts/contacts";
 import { Chat } from "../chat/chat";
 import styles from "./app.module.css";
 
 export const App = () => {
   const [credentials, setCredentials] = useState<Credentials>();
+  const [contacts, setContacts] = useState<ChatModel[]>([]);
   const [chat, setChat] = useState<ChatModel>();
-  const [creating, setCreating] = useState(false);
+  const [adding, setAdding] = useState(false);
   const [error, setError] = useState<string>();
 
   const handleLogin = (value: Credentials) => {
@@ -18,21 +19,37 @@ export const App = () => {
     setError(undefined);
   };
 
-  const handleCreateChat = async (phone: string) => {
-    if (!credentials) return;
-    setCreating(true);
+  const handleSelectChat = (value: ChatModel) => {
+    setChat(value);
+    setError(undefined);
+  };
+
+  const handleAddContact = async (phone: string, firstName: string, lastName?: string): Promise<boolean> => {
+    if (!credentials) return false;
+
+    const existing = contacts.find((contact) => contact.phone === phone);
+    if (existing) {
+      handleSelectChat(existing);
+      return true;
+    }
+
+    setAdding(true);
     setError(undefined);
     try {
       const { exist, chatId } = await checkAccount(credentials, phone);
       if (!exist) {
         setError("На этом номере нет аккаунта MAX");
-        return;
+        return false;
       }
-      setChat({ phone, chatId });
+      const contact: ChatModel = { phone, chatId, firstName, lastName };
+      setContacts((prev) => [...prev, contact]);
+      setChat(contact);
+      return true;
     } catch {
       setError("Не удалось проверить номер. Проверьте учетные данные");
+      return false;
     } finally {
-      setCreating(false);
+      setAdding(false);
     }
   };
 
@@ -40,17 +57,19 @@ export const App = () => {
     return <Login onSubmit={handleLogin} />;
   }
 
-  if (!chat) {
-    return (
-      <Flex className={styles.root} align="center" justify="center">
-        <NewChat onSubmit={handleCreateChat} error={error} loading={creating} />
-      </Flex>
-    );
-  }
-
   return (
-    <Flex className={styles.root} direction="column">
-      <Chat credentials={credentials} chat={chat} />
-    </Flex>
+    <div className={styles.shell}>
+      <Nav />
+      <Contacts
+        contacts={contacts}
+        selectedChatId={chat?.chatId}
+        adding={adding}
+        error={error}
+        onSelect={handleSelectChat}
+        onAdd={handleAddContact}
+        onClearError={() => setError(undefined)}
+      />
+      <main className={styles.main}>{chat && <Chat key={chat.chatId} credentials={credentials} chat={chat} />}</main>
+    </div>
   );
 };
